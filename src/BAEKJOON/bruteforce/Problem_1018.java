@@ -87,4 +87,5 @@ public class Problem_1018 {
 
 		return changeNumWithStartW;
 	}
+
 }
