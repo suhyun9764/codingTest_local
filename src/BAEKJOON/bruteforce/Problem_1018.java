@@ -7,61 +7,85 @@ import java.util.StringTokenizer;
 
 public class Problem_1018 {
 
-    private static char[][] board;
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
+	private static char[][] board;
+	private static char[][] startWithWChess = new char[8][8];
+	private static char[][] startWithBChess = new char[8][8];
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int n = Integer.parseInt(st.nextToken());
+		int m = Integer.parseInt(st.nextToken());
 
-        int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
+		board = new char[n][m];
+		for(int i=0;i<n;i++){
+			board[i] = br.readLine().toCharArray();
+		}
 
-        board = new char[n][m];
+		char[] startWithW = {'W','B','W','B','W','B','W','B'};
+		char[] startWithB = {'B','W','B','W','B','W','B','W'};
 
-        for(int i=0;i<n;i++){
-            board[i] = br.readLine().toCharArray();
-        }
 
-        int minChangeNum = 64;
+		makeChess(startWithW,startWithB);
 
-        for(int i=0;i<n-7;i++){
-            for(int j=0;j<m-7;j++){
-                int changeNum = getHaveToChangeNum(i,j);
-                if(minChangeNum > changeNum)
-                    minChangeNum = changeNum;
-            }
-        }
+		int min = 64;
 
-        System.out.println(minChangeNum);
+		for(int i=0;i<n-7;i++){
+			for(int j=0;j<m-7;j++){
+				int haveToChangeNum = getChangeNum(i,j);
+				if(min>haveToChangeNum)
+					min = haveToChangeNum;
+			}
+		}
 
-    }
+		System.out.println(min);
 
-    private static int getHaveToChangeNum(int i, int j) {
-        char firstColor = board[i][j];
-        int changeNum = 0;
-        for(int n = i;n<i+8;n++){
-            for(int m = j;m<j+8;m++){
-                if(i%2==n%2){
-                    if(j%2==m%2){
-                        if(board[n][m]!=firstColor)
-                            changeNum++;
-                    }else{
-                        if(board[n][m]==firstColor)
-                            changeNum++;
-                    }
-                }
-                else if(i%2!=n%2){
-                    if(j%2==m%2){
-                        if(board[n][m]==firstColor)
-                            changeNum++;
-                    }
-                    else{
-                        if(board[n][m]!=firstColor)
-                            changeNum++;
-                    }
-                }
-            }
-        }
 
-        return changeNum;
-    }
+	}
+
+	private static void makeChess(char[] startWithW, char[] startWithB) {
+		for(int i=0;i<8;i++){
+			if(i%2==0){
+				startWithBChess[i] = startWithB;
+				startWithWChess[i] = startWithW;
+			} else{
+				startWithBChess[i] = startWithW;
+				startWithWChess[i] = startWithB;
+			}
+
+		}
+	}
+
+	private static int getChangeNum(int i, int j) {
+		int changeNumWithStartW = getWithStartW(i,j);
+		int changeNumWithStartB = getWithStartB(i,j);
+
+		int minChangeNum = Math.min(changeNumWithStartW, changeNumWithStartB);
+
+		return minChangeNum;
+	}
+
+	private static int getWithStartB(int i, int j) {
+		int changeNumWithStartB = 0;
+		for(int n = 0;n<8;n++){
+			for(int m = 0;m<8;m++){
+				if(startWithBChess[n][m]!=board[n+i][m+j])
+					changeNumWithStartB++;
+			}
+		}
+
+		return changeNumWithStartB;
+	}
+
+	private static int getWithStartW(int i, int j) {
+		int changeNumWithStartW = 0;
+		for(int n = 0;n<8;n++){
+			for(int m = 0;m<8;m++){
+				if(startWithWChess[n][m]!=board[n+i][m+j])
+					changeNumWithStartW++;
+			}
+		}
+
+		return changeNumWithStartW;
+	}
+
 }
